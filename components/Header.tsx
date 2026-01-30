@@ -31,7 +31,7 @@ const Header = () => {
               />
             </div>
             <span className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 via-yellow-600 to-green-600 bg-clip-text text-transparent">
-              BandaraTours - SL
+              EraEliyaTours - SL
             </span>
           </div>
 

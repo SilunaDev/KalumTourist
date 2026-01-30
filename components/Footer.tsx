@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
-              Bnadara Tours
+              Era Eliya Tours - SL
             </h3>
             <p className="text-gray-400 mb-4">
               Your trusted travel partner for exploring the wonders of Sri Lanka. Experience authentic adventures with 15+ years of excellence.

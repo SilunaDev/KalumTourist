@@ -87,7 +87,7 @@ const AboutUs = () => {
                 {/* Title */}
                 <div>
                   <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                    Welcome to <span className="text-blue-600">Bandara Tours</span>
+                    Welcome to <span className="text-blue-600">Era Eliya Tours - SL</span>
                   </h3>
                   <p className="text-lg text-yellow-600 font-semibold">
                     Your Trusted Travel Partner Since 2013
