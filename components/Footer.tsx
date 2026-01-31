@@ -108,7 +108,7 @@ const Footer = () => {
               <li className="flex items-start space-x-3 justify-center md:justify-start">
                 <FaEnvelope className="text-yellow-400 mt-1 flex-shrink-0" />
                 <a href="mailto:kalumns5@gmail.com" className="text-gray-400 hover:text-yellow-400 transition-colors break-all">
-                  kalumns5@gmail.com
+                 eraeliyatours@gmail.com
                 </a>
               </li>
             </ul>
