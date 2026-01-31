@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LankaHorizon - Your Travel Companion",
+  title: "EraEliyaTours - Your Travel Companion",
   description: "Explore the beautiful horizons of Sri Lanka with LankaHorizon",
 };
 
