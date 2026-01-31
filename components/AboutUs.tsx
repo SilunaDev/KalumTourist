@@ -98,7 +98,7 @@ const AboutUs = () => {
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p className="text-lg">
                     With over <span className="font-bold text-blue-600">15 years of excellence</span> in Sri Lankan hospitality, 
-                    <span className="font-semibold"> LankaHorizon</span> has been crafting unforgettable journeys across the 
+                    <span className="font-semibold"> EraEliyaTours</span> has been crafting unforgettable journeys across the 
                     breathtaking landscapes of the Pearl of the Indian Ocean.
                   </p>
 
