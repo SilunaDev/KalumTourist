@@ -19,7 +19,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-3 justify-center md:justify-start">
               <a
-                href="https://facebook.com/KalumBandara"
+                href="https://www.facebook.com/profile.php?id=61587456925266"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300"
