@@ -3,13 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
+interface Review {
+  id?: string;
+  name: string;
+  country: string;
+  image: string;
+  review: string;
+  rating: number;
+}
+
 const Customers = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRotating, setIsRotating] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [dynamicReviews, setDynamicReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const customers = [
+  // Static default reviews
+  const staticCustomers: Review[] = [
     {
       name: "John & Sarah Miller",
       country: "United States",
@@ -53,6 +66,28 @@ const Customers = () => {
       rating: 5,
     },
   ];
+
+  // Combine static and dynamic reviews
+  const customers = [...staticCustomers, ...dynamicReviews];
+
+  // Fetch approved reviews from API
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch('/api/reviews');
+        const data = await response.json();
+        if (data.reviews) {
+          setDynamicReviews(data.reviews);
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -276,11 +311,214 @@ const Customers = () => {
             ))}
           </div>
         </div>
+
+        {/* Add Review Button */}
+        <div className="text-center mt-12">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-gradient-to-r from-blue-600 via-yellow-600 to-green-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          >
+            {showForm ? "Hide Form" : "Share Your Experience"}
+          </button>
+        </div>
+
+        {/* Review Submission Form */}
+        {showForm && <ReviewForm onSuccess={() => setShowForm(false)} />}
       </div>
 
       {/* Bottom Separator */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-yellow-500 to-green-500"></div>
     </section>
+  );
+};
+
+// Review Form Component
+interface ReviewFormProps {
+  onSuccess: () => void;
+}
+
+const ReviewForm = ({ onSuccess }: ReviewFormProps) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    country: '',
+    review: '',
+    rating: 5,
+  });
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('country', formData.country);
+      formDataToSend.append('review', formData.review);
+      formDataToSend.append('rating', formData.rating.toString());
+      if (image) {
+        formDataToSend.append('image', image);
+      }
+
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ 
+          type: 'success', 
+          text: 'Thank you! Your review has been submitted and will be visible after admin approval.' 
+        });
+        setFormData({ name: '', country: '', review: '', rating: 5 });
+        setImage(null);
+        setImagePreview('');
+        setTimeout(() => {
+          onSuccess();
+        }, 3000);
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to submit review' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to submit review. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="mt-12 max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+      <h3 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-blue-600 via-yellow-600 to-green-600 bg-clip-text text-transparent">
+        Share Your Experience
+      </h3>
+      
+      {message.text && (
+        <div className={`mb-6 p-4 rounded-lg ${
+          message.type === 'success' 
+            ? 'bg-green-50 text-green-700 border border-green-200' 
+            : 'bg-red-50 text-red-700 border border-red-200'
+        }`}>
+          {message.text}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Your Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="John Doe"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Country *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.country}
+              onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="United States"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Your Photo *
+          </label>
+          <input
+            type="file"
+            required
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          {imagePreview && (
+            <div className="mt-4 relative w-32 h-32 mx-auto">
+              <Image
+                src={imagePreview}
+                alt="Preview"
+                fill
+                className="rounded-full object-cover border-4 border-blue-200"
+              />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Rating *
+          </label>
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setFormData({ ...formData, rating: star })}
+                className="text-3xl transition-transform hover:scale-125"
+              >
+                {star <= formData.rating ? '⭐' : '☆'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Your Review *
+          </label>
+          <textarea
+            required
+            value={formData.review}
+            onChange={(e) => setFormData({ ...formData, review: e.target.value })}
+            rows={5}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Share your experience with Era Eliya Tours..."
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-gradient-to-r from-blue-600 via-yellow-600 to-green-600 text-white py-4 rounded-lg font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit Review'}
+        </button>
+
+        <p className="text-sm text-gray-500 text-center">
+          * Your review will be reviewed by our admin team before being published
+        </p>
+      </form>
+    </div>
   );
 };
 

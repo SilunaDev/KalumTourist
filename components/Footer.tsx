@@ -19,7 +19,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-3 justify-center md:justify-start">
               <a
-                href="https://facebook.com/KalumBandara"
+                href="https://www.facebook.com/people/EraEliya-Tours/61587456925266/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300"
@@ -107,8 +107,8 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3 justify-center md:justify-start">
                 <FaEnvelope className="text-yellow-400 mt-1 flex-shrink-0" />
-                <a href="mailto:kalumns5@gmail.com" className="text-gray-400 hover:text-yellow-400 transition-colors break-all">
-                  kalumns5@gmail.com
+                <a href="mailto:eraeliyatours@gmail.com" className="text-gray-400 hover:text-yellow-400 transition-colors break-all">
+                  eraeliyatours@gmail.com
                 </a>
               </li>
             </ul>

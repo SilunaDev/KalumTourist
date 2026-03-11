@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "reviews": {
+      ".read": true,
+      ".write": true,
+      "$reviewId": {
+        ".validate": "newData.hasChildren(['name', 'country', 'review', 'rating', 'image', 'status', 'createdAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "country": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "review": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "rating": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5"
+        },
+        "image": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'rejected')"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    }
+  }
+}
