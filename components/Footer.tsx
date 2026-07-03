@@ -19,7 +19,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-3 justify-center md:justify-start">
               <a
-                href="https://www.facebook.com/people/EraEliya-Tours/61587456925266/"
+                href=""
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300"
