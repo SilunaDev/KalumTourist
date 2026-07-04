@@ -21,54 +21,8 @@ const Customers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Static default reviews
-  const staticCustomers: Review[] = [
-    {
-      name: "John & Sarah Miller",
-      country: "United States",
-      image: "/images/customers/customer1.jpeg",
-      review: "Amazing experience! The tour was perfectly organized and our guide was exceptional. Highly recommend!",
-      rating: 5,
-    },
-    {
-      name: "David Thompson",
-      country: "United Kingdom",
-      review: "Professional service from start to finish. The wildlife safari was the highlight of our trip!",
-      image: "/images/customers/customer2.jpeg",
-      rating: 5,
-    },
-    {
-      name: "Maria Garcia",
-      country: "Spain",
-      review: "Unforgettable journey through Sri Lanka. Every detail was taken care of perfectly.",
-      image: "/images/customers/customer3.jpeg",
-      rating: 5,
-    },
-    {
-      name: "Michael Chen",
-      country: "Australia",
-      review: "Best travel experience ever! The cultural tours and food experiences were outstanding.",
-      image: "/images/customers/customer4.jpeg",
-      rating: 5,
-    },
-    {
-      name: "Sophie Laurent",
-      country: "France",
-      review: "Exceptional hospitality and service. Will definitely come back and recommend to friends!",
-      image: "/images/customers/customer5.jpeg",
-      rating: 5,
-    },
-    {
-      name: "James Wilson",
-      country: "Canada",
-      review: "The hotel arrangements and transport were top-notch. Professional and reliable service!",
-      image: "/images/customers/customer6.jpeg",
-      rating: 5,
-    },
-  ];
-
   // Combine static and dynamic reviews
-  const customers = [...staticCustomers, ...dynamicReviews];
+  const customers = dynamicReviews;
 
   // Fetch approved reviews from API
   useEffect(() => {
@@ -112,7 +66,7 @@ const Customers = () => {
 
   // Auto-rotate carousel
   useEffect(() => {
-    if (!isRotating) return;
+    if (!isRotating || customers.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % customers.length);
@@ -122,12 +76,14 @@ const Customers = () => {
   }, [isRotating, customers.length]);
 
   const handleNext = () => {
+    if (customers.length === 0) return;
     setIsRotating(false);
     setCurrentIndex((prev) => (prev + 1) % customers.length);
     setTimeout(() => setIsRotating(true), 5000);
   };
 
   const handlePrev = () => {
+    if (customers.length === 0) return;
     setIsRotating(false);
     setCurrentIndex((prev) => (prev - 1 + customers.length) % customers.length);
     setTimeout(() => setIsRotating(true), 5000);
@@ -203,114 +159,136 @@ const Customers = () => {
         </div>
 
         {/* 3D Carousel Container */}
-        <div className="relative h-[550px] sm:h-[600px] flex items-center justify-center overflow-visible px-4 sm:px-0">
-          <div className="relative w-full h-full max-w-sm sm:max-w-none mx-auto" style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden", perspective: "1000px" }}>
-            {customers.map((customer, index) => {
-              const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-              const style = getCardStyle(index, isMobile);
-              
-              return (
-                <div
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-blue-100/50 animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-blue-600 animate-spin"></div>
+            </div>
+            <p className="mt-4 text-gray-500 font-medium animate-pulse text-sm">Loading reviews...</p>
+          </div>
+        ) : customers.length === 0 ? (
+          <div className="text-center py-16 px-6 bg-white/40 backdrop-blur-md rounded-3xl border border-white/50 max-w-lg mx-auto shadow-xl">
+            <span className="text-5xl mb-4 block animate-bounce">✨</span>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              No Reviews Yet
+            </h3>
+            <p className="text-gray-600 mb-6 text-sm max-w-sm mx-auto leading-relaxed">
+              Be the first to share your journey with Era Eliya Tours! Your feedback helps us shape future adventures.
+            </p>
+          </div>
+        ) : (
+          <div className="relative h-[550px] sm:h-[600px] flex items-center justify-center overflow-visible px-4 sm:px-0">
+            <div className="relative w-full h-full max-w-sm sm:max-w-none mx-auto" style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden", perspective: "1000px" }}>
+              {customers.map((customer, index) => {
+                const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                const style = getCardStyle(index, isMobile);
+                
+                return (
+                  <div
+                    key={index}
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out"
+                    style={{
+                      ...style,
+                      transformStyle: isMobile ? "flat" : "preserve-3d",
+                      backfaceVisibility: "hidden",
+                    }}
+                  >
+                    {/* Customer Card */}
+                    <div className="w-[280px] sm:w-80 lg:w-96 bg-white rounded-3xl shadow-2xl p-5 sm:p-8 backdrop-blur-lg border border-gray-100">
+                      {/* Customer Image */}
+                      <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-yellow-500 to-green-500 rounded-full animate-pulse"></div>
+                        <div className="absolute inset-1 bg-white rounded-full overflow-hidden">
+                          {customer.image && (
+                            <Image
+                              src={customer.image}
+                              alt={customer.name}
+                              fill
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
+                        {/* Country Flag Badge */}
+                        <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-blue-600 to-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-lg">
+                          🌍
+                        </div>
+                      </div>
+
+                      {/* Customer Info */}
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">
+                          {customer.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 mb-3">{customer.country}</p>
+                        
+                        {/* Star Rating */}
+                        <div className="flex justify-center gap-1 mb-4">
+                          {[...Array(customer.rating)].map((_, i) => (
+                            <span key={i} className="text-yellow-500 text-xl">⭐</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Review */}
+                      <div className="relative">
+                        <div className="text-4xl text-blue-200 absolute -top-2 -left-2">"</div>
+                        <p className="text-gray-600 text-sm sm:text-base leading-relaxed italic px-4">
+                          {customer.review}
+                        </p>
+                        <div className="text-4xl text-green-200 absolute -bottom-6 -right-2">"</div>
+                      </div>
+
+                      {/* Decorative Bottom Line */}
+                      <div className="mt-6 h-1 bg-gradient-to-r from-blue-500 via-yellow-500 to-green-500 rounded-full"></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={handlePrev}
+              className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-gray-50 text-gray-700 p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110"
+              aria-label="Previous customer"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={handleNext}
+              className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-gray-50 text-gray-700 p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110"
+              aria-label="Next customer"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Carousel Indicators */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              {customers.map((_, index) => (
+                <button
                   key={index}
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out"
-                  style={{
-                    ...style,
-                    transformStyle: isMobile ? "flat" : "preserve-3d",
-                    backfaceVisibility: "hidden",
+                  onClick={() => {
+                    setIsRotating(false);
+                    setCurrentIndex(index);
+                    setTimeout(() => setIsRotating(true), 5000);
                   }}
-                >
-                {/* Customer Card */}
-                <div className="w-[280px] sm:w-80 lg:w-96 bg-white rounded-3xl shadow-2xl p-5 sm:p-8 backdrop-blur-lg border border-gray-100">
-                  {/* Customer Image */}
-                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-yellow-500 to-green-500 rounded-full animate-pulse"></div>
-                    <div className="absolute inset-1 bg-white rounded-full overflow-hidden">
-                      <Image
-                        src={customer.image}
-                        alt={customer.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    {/* Country Flag Badge */}
-                    <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-blue-600 to-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-lg">
-                      🌍
-                    </div>
-                  </div>
-
-                  {/* Customer Info */}
-                  <div className="text-center mb-4">
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">
-                      {customer.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-3">{customer.country}</p>
-                    
-                    {/* Star Rating */}
-                    <div className="flex justify-center gap-1 mb-4">
-                      {[...Array(customer.rating)].map((_, i) => (
-                        <span key={i} className="text-yellow-500 text-xl">⭐</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Review */}
-                  <div className="relative">
-                    <div className="text-4xl text-blue-200 absolute -top-2 -left-2">"</div>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed italic px-4">
-                      {customer.review}
-                    </p>
-                    <div className="text-4xl text-green-200 absolute -bottom-6 -right-2">"</div>
-                  </div>
-
-                  {/* Decorative Bottom Line */}
-                  <div className="mt-6 h-1 bg-gradient-to-r from-blue-500 via-yellow-500 to-green-500 rounded-full"></div>
-                </div>
-              </div>
-            );
-            })}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? "bg-gradient-to-r from-blue-500 to-green-500 w-8"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                  aria-label={`Go to customer ${index + 1}`}
+                ></button>
+              ))}
+            </div>
           </div>
-
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrev}
-            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-gray-50 text-gray-700 p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110"
-            aria-label="Previous customer"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <button
-            onClick={handleNext}
-            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-gray-50 text-gray-700 p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110"
-            aria-label="Next customer"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Carousel Indicators */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {customers.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setIsRotating(false);
-                  setCurrentIndex(index);
-                  setTimeout(() => setIsRotating(true), 5000);
-                }}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? "bg-gradient-to-r from-blue-500 to-green-500 w-8"
-                    : "bg-gray-300 hover:bg-gray-400"
-                }`}
-                aria-label={`Go to customer ${index + 1}`}
-              ></button>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Add Review Button */}
         <div className="text-center mt-12">
