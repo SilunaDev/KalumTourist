@@ -102,7 +102,7 @@ const Services = () => {
       className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-blue-50 via-white to-green-50 relative overflow-hidden"
     >
       {/* Left Edge Travel Decorations */}
-      <div className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 hidden lg:block">
+      <div className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 hidden lg:block z-0 opacity-40 pointer-events-none">
         <div className="flex flex-col gap-6 items-center">
           {/* Compass */}
           <div className="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center text-2xl transform hover:rotate-180 transition-transform duration-700">
@@ -128,7 +128,7 @@ const Services = () => {
       </div>
 
       {/* Right Edge Travel Decorations */}
-      <div className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 hidden lg:block">
+      <div className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 hidden lg:block z-0 opacity-40 pointer-events-none">
         <div className="flex flex-col gap-6 items-center">
           {/* Beach */}
           <div className="text-3xl hover:scale-110 transition-transform duration-300">
@@ -233,7 +233,7 @@ const Services = () => {
         </div>
 
         {/* Bottom Left Corner Decoration */}
-        <div className="absolute left-4 sm:left-8 lg:left-12 bottom-8 hidden lg:block">
+        <div className="absolute left-4 sm:left-8 lg:left-12 bottom-8 hidden lg:block z-0 opacity-40 pointer-events-none">
           <div className="flex items-center gap-4">
             <div className="text-4xl hover:scale-110 transition-transform duration-300">
               🌴
@@ -250,7 +250,7 @@ const Services = () => {
         </div>
 
         {/* Bottom Right Corner Decoration */}
-        <div className="absolute right-4 sm:right-8 lg:right-12 bottom-8 hidden lg:block">
+        <div className="absolute right-4 sm:right-8 lg:right-12 bottom-8 hidden lg:block z-0 opacity-40 pointer-events-none">
           <div className="flex items-center gap-4">
             <div className="text-3xl hover:scale-110 transition-transform duration-300">
               🌺

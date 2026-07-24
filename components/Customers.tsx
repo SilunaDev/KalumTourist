@@ -19,6 +19,7 @@ const Customers = () => {
   const [showForm, setShowForm] = useState(false);
   const [dynamicReviews, setDynamicReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   // Combine static and dynamic reviews
@@ -233,9 +234,23 @@ const Customers = () => {
                       {/* Review */}
                       <div className="relative">
                         <div className="text-4xl text-blue-200 absolute -top-2 -left-2">"</div>
-                        <p className="text-gray-600 text-sm sm:text-base leading-relaxed italic px-4">
-                          {customer.review}
-                        </p>
+                        <div className="px-4">
+                          <p className={`text-gray-600 text-sm sm:text-base leading-relaxed italic ${customer.review.length > 150 ? 'line-clamp-4' : ''}`}>
+                            {customer.review}
+                          </p>
+                          {customer.review.length > 150 && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsRotating(false);
+                                setSelectedReview(customer);
+                              }}
+                              className="text-blue-500 hover:text-blue-700 text-sm font-semibold mt-2 focus:outline-none transition-colors"
+                            >
+                              Read more
+                            </button>
+                          )}
+                        </div>
                         <div className="text-4xl text-green-200 absolute -bottom-6 -right-2">"</div>
                       </div>
 
@@ -302,6 +317,50 @@ const Customers = () => {
 
         {/* Review Submission Form */}
         {showForm && <ReviewForm onSuccess={() => setShowForm(false)} />}
+        
+        {/* Full Review Modal */}
+        {selectedReview && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity" onClick={() => { setSelectedReview(null); setIsRotating(true); }}>
+            <div 
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative animate-in fade-in zoom-in duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => { setSelectedReview(null); setIsRotating(true); }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors bg-gray-100 hover:bg-gray-200 rounded-full p-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="flex items-center gap-4 mb-6 pr-10">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-blue-100 shrink-0">
+                  {selectedReview.image && (
+                    <Image src={selectedReview.image} alt={selectedReview.name} fill className="object-cover" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">{selectedReview.name}</h3>
+                  <p className="text-sm text-gray-500">{selectedReview.country}</p>
+                  <div className="flex gap-1 mt-1">
+                    {[...Array(selectedReview.rating)].map((_, i) => (
+                      <span key={i} className="text-yellow-500 text-sm">⭐</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="text-4xl text-blue-200 absolute -top-4 -left-2">"</div>
+                <div className="max-h-[50vh] overflow-y-auto px-6 pt-2 pb-6 custom-scrollbar">
+                  <p className="text-gray-600 leading-relaxed italic">
+                    {selectedReview.review}
+                  </p>
+                </div>
+                <div className="text-4xl text-green-200 absolute bottom-0 right-0">"</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Bottom Separator */}
